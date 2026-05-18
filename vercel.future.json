@@ -1,0 +1,11 @@
+{
+  "_comment": "Configuración para cuando upgrades a Vercel Pro. Por ahora vercel.json está vacío para que el deploy free pase.",
+  "_instructions": "Cuando upgradees a Pro: (1) renombrá este archivo a vercel.json reemplazando el vacío; (2) creá el endpoint /api/cron descrito abajo; (3) push a main para redeploy.",
+  "_endpoint_required": "src/app/api/cron/route.ts — debe hacer GET handler que actualice scores de partidos LIVE/finished desde tu fuente (API-Football, etc.) y retornar 200.",
+  "crons": [
+    {
+      "path": "/api/cron",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}
