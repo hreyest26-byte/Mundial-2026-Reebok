@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   REEBOK WORLD CUP POOL 2026 — Design Tokens
+   Todos los colores de la app vienen de aquí.
+   Nunca uses hex directamente en los componentes.
+   ============================================================ */
+
+@layer base {
+  :root {
+    /* Paleta Reebok */
+    --rb-red: #cc0000;
+    --rb-blue: #003da5;
+    --rb-white: #f5f4f0;
+    --rb-black: #0d0d0d;
+    --rb-900: #1a1a1a;
+    --rb-800: #2a2a2a;
+    --rb-700: #3d3d3d;
+    --rb-500: #737373;
+    --rb-gold: #c9a84c;
+    --rb-silver: #a0a0a0;
+    --rb-bronze: #8b5e3c;
+
+    /* Gradiente de card (línea superior) */
+    --card-accent-gradient: linear-gradient(
+      to right,
+      var(--rb-red),
+      var(--rb-blue)
+    );
+  }
+
+  /* Dark mode por defecto — la clase "dark" se inyecta en <html> desde layout.tsx */
+  html {
+    background-color: var(--rb-black);
+    color: var(--rb-white);
+    font-family: var(--font-barlow), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-rb-black text-rb-white;
+    min-height: 100dvh;
+  }
+
+  /* Scrollbar personalizada */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--rb-900);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--rb-700);
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--rb-red);
+  }
+
+  /* Selección de texto */
+  ::selection {
+    background-color: var(--rb-red);
+    color: var(--rb-white);
+  }
+
+  /* Reset para inputs */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+}
+
+/* ============================================================
+   UTILIDADES REUTILIZABLES (clases que combinan tokens)
+   ============================================================ */
+
+@layer components {
+  /* Card base con línea superior degradada */
+  .rb-card {
+    @apply bg-rb-900 border border-rb-800 rounded-rb-lg relative overflow-hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .rb-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--card-accent-gradient);
+  }
+
+  /* Texto de pantalla grande — marcadores, títulos hero */
+  .rb-score {
+    @apply font-display font-black text-rb-white tabular-nums;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Label uppercase estilo Reebok */
+  .rb-label {
+    @apply font-display font-bold uppercase tracking-[0.15em] text-rb-500;
+    font-size: 0.6875rem;
+    line-height: 1;
+  }
+
+  /* Gradiente de texto Reebok */
+  .rb-gradient-text {
+    background: var(--card-accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Botón base */
+  .rb-btn-base {
+    @apply font-display font-bold uppercase tracking-widest rounded-rb transition-all duration-200;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rb-red focus-visible:ring-offset-2 focus-visible:ring-offset-rb-black;
+    @apply disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  /* Input base */
+  .rb-input-base {
+    @apply bg-rb-900 border border-rb-700 rounded-rb text-rb-white placeholder:text-rb-500;
+    @apply focus:outline-none focus:border-rb-red focus:ring-1 focus:ring-rb-red;
+    @apply transition-colors duration-200;
+  }
+
+  /* Badge pill */
+  .rb-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-display font-bold uppercase;
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+  }
+}
+
+/* ============================================================
+   ANIMACIONES GLOBALES
+   ============================================================ */
+
+@layer utilities {
+  /* Badge EN VIVO pulsante */
+  .animate-pulse-live {
+    animation: pulse-live 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-live {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  /* Slide up para toasts y modales */
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(16px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
