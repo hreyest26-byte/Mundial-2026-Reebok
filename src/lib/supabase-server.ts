@@ -1,14 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database";
 
 // Cliente para usar en SERVER COMPONENTS y API Routes
 // Lee las cookies de la sesión del usuario
 export function createServerSupabase() {
   const cookieStore = cookies();
 
-  return createServerClient<Database>(
+  return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -34,7 +33,7 @@ export function createServerSupabase() {
 // ⚠️ NUNCA uses esta función en componentes del cliente
 // Tiene acceso completo a la base de datos, ignorando RLS
 export function createAdminSupabase() {
-  return createClient<Database>(
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {

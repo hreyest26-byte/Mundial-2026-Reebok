@@ -3,7 +3,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import type { Database } from "@/types/database";
+
+// NOTA: Antes este archivo importaba `Database` desde "@/types/database"
+// para tipar el cliente Supabase. Eliminamos esa dependencia porque el
+// archivo database.ts es auto-generado y a veces no llega al build de
+// Vercel. La funcionalidad es idéntica — solo perdemos auto-complete
+// sobre los nombres de tablas en queries crudos.
 
 const ALLOWED_DOMAINS = ["reebok.cl", "adidas.com", "reebok.com", "fashionfitnessgroup.com"];
 
@@ -14,7 +19,7 @@ function isAllowedDomain(email: string): boolean {
 
 function makeSupabase() {
   const cookieStore = cookies();
-  return createServerClient<Database>(
+  return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {

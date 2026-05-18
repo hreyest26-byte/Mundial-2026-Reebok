@@ -29,5 +29,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Supabase types (generados, no hardcodear)
-src/types/database.ts
+# NOTA: src/types/database.ts SÍ se trackea en el repo (lo necesita Vercel para buildear).
+# Si lo regenerás con `supabase gen types`, hacé commit después.
