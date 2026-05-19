@@ -1,15 +1,160 @@
-import type { Database } from "./database";
+// Tipos de dominio — definidos INLINE para que el build no dependa de
+// database.ts (que se autogenera y a veces no llega a Vercel).
+// Si en el futuro querés volver a derivar desde la DB, descomentá el import
+// y reemplazá cada interface por: export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
-// Tipos derivados directamente de la base de datos
-export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-export type Team = Database["public"]["Tables"]["teams"]["Row"];
-export type Match = Database["public"]["Tables"]["matches"]["Row"];
-export type Prediction = Database["public"]["Tables"]["predictions"]["Row"];
-export type Badge = Database["public"]["Tables"]["badges"]["Row"];
-export type UserBadge = Database["public"]["Tables"]["user_badges"]["Row"];
-export type Notification = Database["public"]["Tables"]["notifications"]["Row"];
+// ====================================================================
+// PROFILES
+// ====================================================================
+export interface Profile {
+  id: string;
+  full_name: string;
+  nickname: string;
+  avatar_url: string | null;
+  total_points: number;
+  rank_position: number;
+  rank_previous: number;
+  exact_scores: number;
+  correct_results: number;
+  role: "user" | "admin";
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-// Tipos extendidos para la UI (joins de tablas)
+// ====================================================================
+// TEAMS
+// ====================================================================
+export interface Team {
+  id: string;
+  name: string;
+  country_code: string;
+  group_name: string | null;
+  flag_url: string | null;
+}
+
+// ====================================================================
+// MATCHES
+// ====================================================================
+export type MatchStage =
+  | "group"
+  | "round_of_32"
+  | "round_of_16"
+  | "quarter"
+  | "semi"
+  | "third_place"
+  | "final";
+
+export type MatchStatus =
+  | "scheduled"
+  | "live"
+  | "halftime"
+  | "finished"
+  | "postponed";
+
+export interface Match {
+  id: string;
+  home_team_id: string;
+  away_team_id: string;
+  stage: MatchStage;
+  group_name: string | null;
+  match_time: string;
+  lock_time: string;
+  home_score: number | null;
+  away_score: number | null;
+  status: MatchStatus;
+  venue: string | null;
+  external_match_id: string | null;
+  updated_at: string;
+  // campos opcionales LIVE (migration 007)
+  current_minute?: number | null;
+  last_event?: string | null;
+  last_event_at?: string | null;
+}
+
+// ====================================================================
+// PREDICTIONS
+// ====================================================================
+export interface Prediction {
+  id: string;
+  user_id: string;
+  match_id: string;
+  predicted_home: number;
+  predicted_away: number;
+  points_earned: number;
+  is_locked: boolean;
+  is_exact: boolean;
+  is_correct_result: boolean;
+  predicted_at: string;
+}
+
+// ====================================================================
+// BADGES
+// ====================================================================
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  trigger_type:
+    | "first_exact"
+    | "streak_3"
+    | "streak_5"
+    | "rank_1"
+    | "biggest_climb"
+    | "mvp_week"
+    | "golden_boot";
+  trigger_value: number;
+}
+
+export interface UserBadge {
+  id: string;
+  user_id: string;
+  badge_id: string;
+  earned_at: string;
+}
+
+// ====================================================================
+// NOTIFICATIONS
+// ====================================================================
+export type NotificationType =
+  | "match_starting"
+  | "predictions_closing"
+  | "ranking_update"
+  | "badge_earned"
+  | "top_3_entry";
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: NotificationType;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+}
+
+// ====================================================================
+// TOURNAMENT PREDICTIONS (predicciones especiales)
+// ====================================================================
+export type TournamentPredictionType =
+  | "champion"
+  | "runner_up"
+  | "top_scorer"
+  | "mvp"
+  | "best_goalkeeper";
+
+export interface TournamentPrediction {
+  id: string;
+  user_id: string;
+  prediction_type: TournamentPredictionType;
+  team_id: string | null;
+  player_name: string | null;
+  points_earned: number;
+}
+
+// ====================================================================
+// TIPOS EXTENDIDOS PARA LA UI (joins de tablas)
+// ====================================================================
 export type MatchWithTeams = Match & {
   home_team: Pick<Team, "id" | "name" | "country_code" | "flag_url">;
   away_team: Pick<Team, "id" | "name" | "country_code" | "flag_url">;
@@ -26,25 +171,16 @@ export type ProfileWithBadges = Profile & {
 // Roles de usuario
 export type UserRole = "user" | "admin";
 
-// Estado de un partido
-export type MatchStatus = Match["status"];
-
-// Etapa del torneo
-export type MatchStage = Match["stage"];
-
-// Tipos de notificación
-export type NotificationType = Notification["type"];
-
 // Reglas de puntaje (almacenadas en admin_settings)
 export interface ScoreRules {
-  exacto: number;           // Marcador exacto (ej: 7 pts)
-  resultado: number;        // Resultado correcto sin ser exacto (ej: 3 pts)
-  anticipacion_24h: number; // Bonus por predecir con 24h+ de anticipación (ej: 1 pt)
-  campeon: number;          // Predicción especial: campeón (ej: 15 pts)
-  subcampeon: number;       // Predicción especial: subcampeón (ej: 10 pts)
-  goleador: number;         // Predicción especial: goleador (ej: 10 pts)
-  mvp: number;              // Predicción especial: MVP (ej: 8 pts)
-  arquero: number;          // Predicción especial: mejor arquero (ej: 8 pts)
+  exacto: number;
+  resultado: number;
+  anticipacion_24h: number;
+  campeon: number;
+  subcampeon: number;
+  goleador: number;
+  mvp: number;
+  arquero: number;
 }
 
 // Valores por defecto del sistema de puntaje
