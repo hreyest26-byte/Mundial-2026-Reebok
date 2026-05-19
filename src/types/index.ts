@@ -1,11 +1,5 @@
-// Tipos de dominio — definidos INLINE para que el build no dependa de
-// database.ts (que se autogenera y a veces no llega a Vercel).
-// Si en el futuro querés volver a derivar desde la DB, descomentá el import
-// y reemplazá cada interface por: export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+// Tipos de dominio — definidos INLINE para que el build no dependa de archivos auto-generados.
 
-// ====================================================================
-// PROFILES
-// ====================================================================
 export interface Profile {
   id: string;
   full_name: string;
@@ -22,9 +16,6 @@ export interface Profile {
   updated_at: string;
 }
 
-// ====================================================================
-// TEAMS
-// ====================================================================
 export interface Team {
   id: string;
   name: string;
@@ -33,9 +24,6 @@ export interface Team {
   flag_url: string | null;
 }
 
-// ====================================================================
-// MATCHES
-// ====================================================================
 export type MatchStage =
   | "group"
   | "round_of_32"
@@ -66,15 +54,11 @@ export interface Match {
   venue: string | null;
   external_match_id: string | null;
   updated_at: string;
-  // campos opcionales LIVE (migration 007)
   current_minute?: number | null;
   last_event?: string | null;
   last_event_at?: string | null;
 }
 
-// ====================================================================
-// PREDICTIONS
-// ====================================================================
 export interface Prediction {
   id: string;
   user_id: string;
@@ -88,9 +72,6 @@ export interface Prediction {
   predicted_at: string;
 }
 
-// ====================================================================
-// BADGES
-// ====================================================================
 export interface Badge {
   id: string;
   name: string;
@@ -114,9 +95,6 @@ export interface UserBadge {
   earned_at: string;
 }
 
-// ====================================================================
-// NOTIFICATIONS
-// ====================================================================
 export type NotificationType =
   | "match_starting"
   | "predictions_closing"
@@ -133,9 +111,6 @@ export interface Notification {
   created_at: string;
 }
 
-// ====================================================================
-// TOURNAMENT PREDICTIONS (predicciones especiales)
-// ====================================================================
 export type TournamentPredictionType =
   | "champion"
   | "runner_up"
@@ -152,9 +127,6 @@ export interface TournamentPrediction {
   points_earned: number;
 }
 
-// ====================================================================
-// TIPOS EXTENDIDOS PARA LA UI (joins de tablas)
-// ====================================================================
 export type MatchWithTeams = Match & {
   home_team: Pick<Team, "id" | "name" | "country_code" | "flag_url">;
   away_team: Pick<Team, "id" | "name" | "country_code" | "flag_url">;
@@ -168,10 +140,8 @@ export type ProfileWithBadges = Profile & {
   user_badges: (UserBadge & { badge: Badge })[];
 };
 
-// Roles de usuario
 export type UserRole = "user" | "admin";
 
-// Reglas de puntaje (almacenadas en admin_settings)
 export interface ScoreRules {
   exacto: number;
   resultado: number;
@@ -183,7 +153,6 @@ export interface ScoreRules {
   arquero: number;
 }
 
-// Valores por defecto del sistema de puntaje
 export const DEFAULT_SCORE_RULES: ScoreRules = {
   exacto: 7,
   resultado: 3,

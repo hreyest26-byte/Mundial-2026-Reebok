@@ -17,8 +17,6 @@ function validateEmailDomain(email: string): boolean {
 }
 
 export default function RegistroPage() {
-  const supabase = createClient();
-
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +28,6 @@ export default function RegistroPage() {
     e.preventDefault();
     setError(null);
 
-    // Validación de dominio en el cliente (primera capa de seguridad)
     if (!validateEmailDomain(email)) {
       setError(
         "Solo se aceptan emails corporativos (@reebok.cl, @adidas.com, @reebok.com, @fashionfitnessgroup.com)"
@@ -49,6 +46,10 @@ export default function RegistroPage() {
     }
 
     setLoading(true);
+
+    // Crear el cliente Supabase RECIÉN cuando se necesita (no en module-load)
+    // Esto evita que el build SSG falle si las env vars no están en build time
+    const supabase = createClient();
 
     const { error: authError } = await supabase.auth.signUp({
       email,
@@ -76,7 +77,6 @@ export default function RegistroPage() {
 
   return (
     <div className="min-h-dvh bg-rb-black flex flex-col items-center justify-center px-4 py-12">
-      {/* Logo + título */}
       <div className="mb-8 text-center space-y-3">
         <div className="flex items-center justify-center gap-3">
           <ReebokVector size={44} color="#CC0000" />
@@ -132,7 +132,6 @@ export default function RegistroPage() {
               autoComplete="new-password"
             />
 
-            {/* Selector de nickname Reebok */}
             <div className="space-y-2">
               <label className="rb-label block">Tu apodo Reebok</label>
               <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
